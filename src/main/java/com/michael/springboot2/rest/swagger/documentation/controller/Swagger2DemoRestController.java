@@ -6,6 +6,7 @@ package com.michael.springboot2.rest.swagger.documentation.controller;
 
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
@@ -23,7 +24,7 @@ import com.michael.springboot2.rest.swagger.documentation.model.Student;
  *
  */
 @RestController
-@Api(value = "REST APIs related to Student Entity")
+@Api(value="REST APIs related to Student Entity") // This will not be used after 1.5.x
 public class Swagger2DemoRestController {
 
 	List<Student> students = new ArrayList<Student>();
@@ -34,7 +35,8 @@ public class Swagger2DemoRestController {
 		students.add(new Student("Sukesh", "VI", "USA"));
 	}
 
-	@ApiOperation(value = "Get list of Students in the System ", response = Iterable.class, tags = "getStudents")
+	@ApiOperation(value = "Get list of Students in the System ", response = Iterable.class)
+	//@ApiOperation(value = "Get list of Students in the System ", response = Iterable.class, tags = "getStudents")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Successfully retrieved students list"),
 			@ApiResponse(code = 401, message = "You are not authorized to view the students"),
@@ -45,7 +47,7 @@ public class Swagger2DemoRestController {
 		return students;
 	}
 
-	@ApiOperation(value = "Get specific Student in the System ", response = Student.class, tags = "getStudent")
+	@ApiOperation(value = "Get specific Student in the System ", response = Student.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Success|OK"),
 			@ApiResponse(code = 401, message = "Not Authorized!"),
@@ -56,14 +58,16 @@ public class Swagger2DemoRestController {
 		return students.stream().filter(x -> x.getName().equalsIgnoreCase(name)).collect(Collectors.toList()).get(0);
 	}
 
-	@ApiOperation(value = "Get specific Student By Country in the System ", response = Iterable.class, tags = "getStudentByCountry")
+	@ApiOperation(value = "Get specific Student By Country in the System ", response = Iterable.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Success|OK"),
 			@ApiResponse(code = 401, message = "Not Authorized!"),
 			@ApiResponse(code = 403, message = "Forbidden!!!"),
 			@ApiResponse(code = 404, message = "Not Found!!!") })
 	@GetMapping(value = "/getStudentByCountry/{country}")
-	public List<Student> getStudentByCountry(@PathVariable(value = "country") String country) {
+	public List<Student> getStudentByCountry(
+			@ApiParam(name = "country", value = "Pass the country to pick the student details", required = true)
+	@PathVariable(value = "country") String country) {
 		System.out.println("Searching Student in country : " + country);
 		List<Student> studentsByCountry = students.stream().filter(x -> x.getCountry().equalsIgnoreCase(country))
 				.collect(Collectors.toList());
@@ -71,14 +75,16 @@ public class Swagger2DemoRestController {
 		return studentsByCountry;
 	}
 
-	@ApiOperation(value = "Get specific Student By Class in the System ",response = Student.class,tags="getStudentByClass")
+	@ApiOperation(value = "Get specific Student By Class in the System ",response = Student.class)
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Success|OK"),
 			@ApiResponse(code = 401, message = "Not Authorized!"),
 			@ApiResponse(code = 403, message = "Forbidden!!!"),
 			@ApiResponse(code = 404, message = "Not Found!!!") })
 	@GetMapping(value = "/getStudentByClass/{cls}")
-	public List<Student> getStudentByClass(@PathVariable(value = "cls") String cls) {
+	public List<Student> getStudentByClass(
+			@ApiParam(name = "class", value = "Pass the class to pick the student details", required = true)
+			@PathVariable(value = "cls") String cls) {
 		return students.stream().filter(x -> x.getCls().equalsIgnoreCase(cls)).collect(Collectors.toList());
 	}
 }
